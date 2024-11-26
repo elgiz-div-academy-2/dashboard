@@ -7,10 +7,15 @@ const {
 
 const authRouter = Router();
 
-authRouter.post("/login", (req, res) => {});
+authRouter.post(
+  "/login",
+  validationMiddleware(userValidation.login),
+  authController.logIn
+);
 authRouter.post(
   "/register",
   validationMiddleware(userValidation.register),
+
   authController.register
 );
 
