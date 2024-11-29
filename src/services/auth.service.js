@@ -1,4 +1,5 @@
 const userModel = require("../models/user.model");
+const { DublicateError, NotFoundError } = require("../utils/error.utils");
 const { encodePayload } = require("../utils/jwt.utils");
 const bcrypt = require("bcrypt");
 
@@ -14,7 +15,8 @@ const register = async (params) => {
     ],
   });
 
-  if (existsUser) throw new Error("username or email is already exists");
+  if (existsUser)
+    throw new DublicateError("username or email is already exists");
 
   let user = new userModel(params);
 
@@ -28,11 +30,11 @@ const logIn = async (params) => {
     username: params.username,
   });
 
-  if (!user) throw new Error("Username or password is not valid");
+  if (!user) throw new NotFoundError("Username or password is not valid");
 
   let checkPassword = await bcrypt.compare(params.password, user.password);
   if (!checkPassword) {
-    throw new Error("Username or password is not valid");
+    throw new NotFoundError("Username or password is not valid");
   }
 
   let token = encodePayload({ userId: user._id });
